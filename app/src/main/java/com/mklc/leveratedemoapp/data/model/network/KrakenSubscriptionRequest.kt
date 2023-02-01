@@ -24,9 +24,3 @@ data class KrakenSubscriptionRequest(
     @field:Json(name = "subscription")
     val subscription: Subscription
 )
-
-@JsonClass(generateAdapter = true)
-data class Subscription(
-    @field:Json(name = "name")
-    val name: String = "ticker"
-)

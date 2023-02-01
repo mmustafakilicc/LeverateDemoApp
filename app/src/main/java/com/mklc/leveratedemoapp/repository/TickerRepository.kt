@@ -6,9 +6,12 @@ import org.java_websocket.client.WebSocketClient
 import org.java_websocket.handshake.ServerHandshake
 import timber.log.Timber
 import java.net.URI
+import javax.inject.Inject
+import javax.inject.Singleton
 import javax.net.ssl.SSLSocketFactory
 
-class TickerRepository {
+@Singleton
+class TickerRepository @Inject constructor() {
 
     private val messagePublish = PublishSubject.create<String>()
 
@@ -85,6 +88,7 @@ class TickerRepository {
             override fun onMessage(message: String?) {
                 Timber.d(message)
                 messagePublish.onNext(message)
+                message?.let { parseMessage(it) }
             }
 
             override fun onClose(code: Int, reason: String?, remote: Boolean) {
@@ -104,6 +108,10 @@ class TickerRepository {
 
     private fun unsubscribe(){
         client.send(unSubscriptionPayload)
+    }
+
+    private fun parseMessage(message: String){
+        //TODO convert message to ticker object
     }
 
     fun getMessages(): Observable<String> = messagePublish
