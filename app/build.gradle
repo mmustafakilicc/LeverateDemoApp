@@ -1,16 +1,18 @@
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
+    id 'kotlin-kapt'
+    id 'com.google.dagger.hilt.android'
 }
 
 android {
     namespace 'com.mklc.leveratedemoapp'
-    compileSdk 32
+    compileSdk 33
 
     defaultConfig {
         applicationId "com.mklc.leveratedemoapp"
         minSdk 24
-        targetSdk 32
+        targetSdk 33
         versionCode 1
         versionName "1.0"
 
@@ -30,14 +32,40 @@ android {
     kotlinOptions {
         jvmTarget = '1.8'
     }
+    buildFeatures {
+        dataBinding true
+    }
 }
 
 dependencies {
 
-    implementation 'androidx.core:core-ktx:1.7.0'
+    def moshi_version = "1.14.0"
+    def hilt_version = "2.44"
+
+    implementation 'androidx.core:core-ktx:1.9.0'
     implementation 'androidx.appcompat:appcompat:1.6.0'
     implementation 'com.google.android.material:material:1.8.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    implementation 'androidx.fragment:fragment-ktx:1.5.5'
+
+    // WebSocket
+    implementation "org.java-websocket:Java-WebSocket:1.5.3"
+
+    // JSON
+    implementation "com.squareup.moshi:moshi:$moshi_version"
+    kapt "com.squareup.moshi:moshi-kotlin-codegen:$moshi_version"
+
+    // RxJava
+    implementation 'io.reactivex.rxjava3:rxandroid:3.0.2'
+    implementation 'io.reactivex.rxjava3:rxjava:3.1.5'
+
+    // Log
+    implementation 'com.jakewharton.timber:timber:5.0.1'
+
+    // DI
+    implementation "com.google.dagger:hilt-android:$hilt_version"
+    kapt "com.google.dagger:hilt-compiler:$hilt_version"
+
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
