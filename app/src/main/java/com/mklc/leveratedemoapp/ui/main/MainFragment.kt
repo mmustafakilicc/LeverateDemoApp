@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import com.mklc.leveratedemoapp.R
 import com.mklc.leveratedemoapp.databinding.FragmentMainBinding
 import com.mklc.leveratedemoapp.ui.main.adapter.MainAdapter
+import com.mklc.leveratedemoapp.ui.main.adapter.MainCarouselAdapter
 import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
 
@@ -20,6 +21,7 @@ class MainFragment : Fragment() {
     private val viewModel: MainViewModel by activityViewModels()
     private lateinit var binding: FragmentMainBinding
     private lateinit var adapter: MainAdapter
+    private lateinit var adapterCarousel: MainCarouselAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -51,6 +53,14 @@ class MainFragment : Fragment() {
             itemAnimator = null
             addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
         }
+        adapterCarousel = MainCarouselAdapter()
+        binding.recyclerViewTickerListCarousel.apply {
+            adapter = this@MainFragment.adapterCarousel
+            set3DItem(true)
+            setAlpha(true)
+            setInfinite(true)
+            itemAnimator = null
+        }
     }
 
     private fun observeChanges() {
@@ -60,6 +70,10 @@ class MainFragment : Fragment() {
             }
             liveDataTickerViewList.observe(viewLifecycleOwner) {
                 adapter.submitList(it)
+                adapterCarousel.submitList(it)
+            }
+            liveDataOrientation.observe(viewLifecycleOwner){
+
             }
         }
     }

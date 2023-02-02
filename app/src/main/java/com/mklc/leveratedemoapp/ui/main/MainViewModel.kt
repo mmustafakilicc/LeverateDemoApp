@@ -3,6 +3,7 @@ package com.mklc.leveratedemoapp.ui.main
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.recyclerview.widget.RecyclerView
 import com.mklc.leveratedemoapp.R
 import com.mklc.leveratedemoapp.data.model.network.Ticker
 import com.mklc.leveratedemoapp.repository.TickerRepository
@@ -34,6 +35,10 @@ class MainViewModel @Inject constructor(
         get() = _liveDataTickerViewList
 
     private val tickerListView = mutableListOf<TickerView>()
+
+    private val _liveDataOrientation = MutableLiveData(0)
+    val liveDataOrientation: LiveData<Int>
+        get() = _liveDataOrientation
 
     fun setupConnection() {
         tickerRepository.open()
@@ -81,6 +86,14 @@ class MainViewModel @Inject constructor(
     fun stopLoading(){
         tickerRepository.stop()
         disposables.dispose()
+    }
+
+    fun onVerticalClicked(){
+        _liveDataOrientation.postValue(RecyclerView.VERTICAL)
+    }
+
+    fun onHorizontalClicked(){
+        _liveDataOrientation.postValue(RecyclerView.HORIZONTAL)
     }
 
     override fun onCleared() {

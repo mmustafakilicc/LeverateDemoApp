@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="ticker"
+            type="com.mklc.leveratedemoapp.ui.main.adapter.TickerView" />
+    </data>
+
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="75dp">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="50dp">
+
+            <TextView
+                android:id="@+id/textViewTickerName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:text="My Name"
+                android:text="@{ticker.name}"
+                android:gravity="center"
+                android:textStyle="bold"
+                android:padding="5dp"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/textViewTickerPrice"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="5dp"
+                tools:text="My Price"
+                android:text="@{ticker.price}"
+                android:gravity="center"
+                app:layout_constraintTop_toBottomOf="@id/textViewTickerName"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+
+</layout>
