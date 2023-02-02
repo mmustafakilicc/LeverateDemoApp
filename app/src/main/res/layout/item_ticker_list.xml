@@ -8,12 +8,6 @@
             name="ticker"
             type="com.mklc.leveratedemoapp.ui.main.adapter.TickerView" />
     </data>
-
-    <com.google.android.material.card.MaterialCardView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="20dp">
-
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -21,28 +15,49 @@
 
             <TextView
                 android:id="@+id/textViewTickerName"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 tools:text="My Name"
                 android:text="@{ticker.name}"
-                android:gravity="center"
+                android:gravity="center_vertical"
                 android:textStyle="bold"
-                android:textSize="20sp"
-                android:padding="10dp"
-                app:layout_constraintTop_toTopOf="parent"/>
+                android:padding="5dp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/guidLineVertical"/>
+            
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guidLineVertical"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent="0.4"/>
 
             <TextView
                 android:id="@+id/textViewTickerPrice"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="10dp"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:padding="5dp"
                 tools:text="My Price"
                 android:text="@{ticker.price}"
-                android:gravity="center"
-                app:layout_constraintTop_toBottomOf="@id/textViewTickerName"/>
+                android:gravity="center_vertical"
+                app:layout_constraintTop_toTopOf="@id/textViewTickerName"
+                app:layout_constraintBottom_toBottomOf="@id/textViewTickerName"
+                app:layout_constraintStart_toStartOf="@id/guidLineVertical"
+                app:layout_constraintEnd_toStartOf="@id/imagePriceArrow"/>
+
+            <ImageView
+                android:id="@+id/imagePriceArrow"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:src="@{ticker.resId}"
+                tools:src="@drawable/ic_baseline_linear_scale_24"
+                android:scaleType="centerCrop"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/textViewTickerName"
+                app:layout_constraintBottom_toBottomOf="@id/textViewTickerName"
+                tools:ignore="ContentDescription" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
-
-    </com.google.android.material.card.MaterialCardView>
 
 </layout>

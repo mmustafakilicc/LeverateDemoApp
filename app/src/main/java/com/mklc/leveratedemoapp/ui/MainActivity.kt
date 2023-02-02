@@ -1,17 +1,14 @@
 package com.mklc.leveratedemoapp.ui
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import com.mklc.leveratedemoapp.R
 import com.mklc.leveratedemoapp.databinding.ActivityMainBinding
-import com.mklc.leveratedemoapp.repository.TickerRepository
 import com.mklc.leveratedemoapp.ui.main.MainViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import io.reactivex.rxjava3.schedulers.Schedulers
-import timber.log.Timber
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
@@ -23,17 +20,8 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
         binding.lifecycleOwner = this
+        viewModel.setupConnection()
         observeChanges()
-    }
-
-    override fun onStart() {
-        super.onStart()
-        viewModel.start()
-    }
-
-    override fun onStop() {
-        super.onStop()
-        viewModel.stop()
     }
 
     private fun observeChanges() {

@@ -1,5 +1,9 @@
 package com.mklc.leveratedemoapp.repository
 
+import com.mklc.leveratedemoapp.data.model.network.KrakenRequestPayload
+import com.mklc.leveratedemoapp.data.model.network.Subscription
+import com.mklc.leveratedemoapp.data.model.network.Ticker
+import com.mklc.leveratedemoapp.utils.*
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.subjects.PublishSubject
 import org.java_websocket.client.WebSocketClient
@@ -11,108 +15,96 @@ import javax.inject.Singleton
 import javax.net.ssl.SSLSocketFactory
 
 @Singleton
-class TickerRepository @Inject constructor() {
+class TickerRepository @Inject constructor(
+    private val tickerMessageParser: TickerMessageParser,
+    private val krakenJsonAdapter: KrakenJsonAdapter
+) {
 
-    private val messagePublish = PublishSubject.create<String>()
+    private val messagePublish = PublishSubject.create<Ticker>()
+    private val connectPublish = PublishSubject.create<Boolean>()
 
-    private val url = "wss://ws.kraken.com"
-    private val uri: URI = URI(url)
+    private val uri: URI = URI(URL)
 
     private lateinit var client: WebSocketClient
 
     private val socketFactory: SSLSocketFactory = SSLSocketFactory.getDefault() as SSLSocketFactory
 
-    private val subscriptionPayload = "{\n" +
-            "  \"event\": \"subscribe\",\n" +
-            "  \"pair\": [\n" +
-            "\"XBT/EUR\",\n" +
-            "    \"XBT/USD\",\n" +
-            "    \"XBT/GBP\",\n" +
-            "    \"ETH/EUR\",\n" +
-            "    \"ETH/USD\",\n" +
-            "    \"ETH/GBP\",\n" +
-            "    \"ATLAS/USD\",\n" +
-            "    \"ATOM/AUD\",\n" +
-            "    \"BADGER/EUR\",\n" +
-            "    \"BAL/EUR\",\n" +
-            "    \"BNC/USD\",\n" +
-            "    \"CRV/ETH\",\n" +
-            "    \"EUR/GBP\"\n" +
-            "\n" +
-            "  ],\n" +
-            "  \"subscription\": {\n" +
-            "    \"name\": \"ticker\"\n" +
-            "  }\n" +
-            "}"
-
-    private val unSubscriptionPayload = "{\n" +
-            "  \"event\": \"unsubscribe\",\n" +
-            "  \"pair\": [\n" +
-            "\"XBT/EUR\",\n" +
-            "    \"XBT/USD\",\n" +
-            "    \"XBT/GBP\",\n" +
-            "    \"ETH/EUR\",\n" +
-            "    \"ETH/USD\",\n" +
-            "    \"ETH/GBP\",\n" +
-            "    \"ATLAS/USD\",\n" +
-            "    \"ATOM/AUD\",\n" +
-            "    \"BADGER/EUR\",\n" +
-            "    \"BAL/EUR\",\n" +
-            "    \"BNC/USD\",\n" +
-            "    \"CRV/ETH\",\n" +
-            "    \"EUR/GBP\"\n" +
-            "\n" +
-            "  ],\n" +
-            "  \"subscription\": {\n" +
-            "    \"name\": \"ticker\"\n" +
-            "  }\n" +
-            "}"
-
-    fun init(){
+    init {
         createSocketClient()
-        client.setSocketFactory(socketFactory)
+    }
+
+    fun open() {
         client.connect()
     }
 
-    fun close(){
+    fun start(){
+        subscribe()
+    }
+
+    fun stop(){
+        unsubscribe()
+    }
+
+    fun close() {
         client.close()
     }
 
-    private fun createSocketClient(){
+    private fun createSocketClient() {
         client = object : WebSocketClient(uri) {
             override fun onOpen(handshakedata: ServerHandshake?) {
-                Timber.d("onOpen")
-                subscribe()
+                Timber.d("Web socket closed")
+                connectPublish.onNext(true)
             }
 
             override fun onMessage(message: String?) {
-                Timber.d(message)
-                messagePublish.onNext(message)
                 message?.let { parseMessage(it) }
             }
 
             override fun onClose(code: Int, reason: String?, remote: Boolean) {
-                Timber.d("onClose")
-                unsubscribe()
+                Timber.d("Web socket closed")
+                connectPublish.onNext(false)
             }
 
             override fun onError(ex: Exception?) {
-                Timber.d(ex)
+                connectPublish.onNext(false)
             }
+        }
+        client.setSocketFactory(socketFactory)
+    }
+
+    private fun subscribe() {
+        client.send(krakenJsonAdapter.toJson(createSubscriptionRequest("subscribe")))
+    }
+
+    private fun unsubscribe() {
+        client.send(krakenJsonAdapter.toJson(createSubscriptionRequest("unsubscribe")))
+    }
+
+    private fun parseMessage(message: String) {
+        val ticker = tickerMessageParser.parseTickerResponse(message)
+        if (ticker != null) {
+            messagePublish.onNext(ticker)
         }
     }
 
-    private fun subscribe(){
-        client.send(subscriptionPayload)
+    private fun createSubscriptionRequest(event: String): KrakenRequestPayload {
+        return KrakenRequestPayload(event = event, pair = buildList {
+            add(XBT_USD)
+            add(XBT_GBP)
+            add(ETH_EUR)
+            add(ETH_USD)
+            add(ETH_GBP)
+            add(ATLAS_USD)
+            add(ATOM_AUD)
+            add(BADGER_EUR)
+            add(BAL_EUR)
+            add(BNC_USD)
+            add(CRV_ETH)
+            add(EUR_GBP)
+        }, Subscription(name = "ticker"))
     }
 
-    private fun unsubscribe(){
-        client.send(unSubscriptionPayload)
-    }
+    fun getMessages(): Observable<Ticker> = messagePublish
 
-    private fun parseMessage(message: String){
-        //TODO convert message to ticker object
-    }
-
-    fun getMessages(): Observable<String> = messagePublish
+    fun isConnected(): Observable<Boolean> = connectPublish
 }

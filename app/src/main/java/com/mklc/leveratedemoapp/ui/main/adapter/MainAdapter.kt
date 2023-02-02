@@ -29,7 +29,7 @@ class MainAdapter : ListAdapter<TickerView, MainAdapter.TickerVH>(TickerDiffUtil
 
     private class TickerDiffUtilBack : DiffUtil.ItemCallback<TickerView>() {
         override fun areItemsTheSame(oldItem: TickerView, newItem: TickerView): Boolean =
-            oldItem == newItem
+            oldItem.name == newItem.name
 
         override fun areContentsTheSame(oldItem: TickerView, newItem: TickerView): Boolean =
             oldItem.price == newItem.price
