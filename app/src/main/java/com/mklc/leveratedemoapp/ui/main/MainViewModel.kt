@@ -88,12 +88,12 @@ class MainViewModel @Inject constructor(
         disposables.dispose()
     }
 
-    fun onVerticalClicked(){
-        _liveDataOrientation.postValue(RecyclerView.VERTICAL)
-    }
-
-    fun onHorizontalClicked(){
-        _liveDataOrientation.postValue(RecyclerView.HORIZONTAL)
+    fun onOrientationCheckChanged(isChecked: Boolean){
+        if(isChecked){
+            _liveDataOrientation.postValue(RecyclerView.VERTICAL)
+        }else{
+            _liveDataOrientation.postValue(RecyclerView.HORIZONTAL)
+        }
     }
 
     override fun onCleared() {

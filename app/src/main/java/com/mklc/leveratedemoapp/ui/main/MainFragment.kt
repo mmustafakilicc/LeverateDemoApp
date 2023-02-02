@@ -1,5 +1,7 @@
 package com.mklc.leveratedemoapp.ui.main
 
+import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -8,6 +10,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.RecyclerView
 import com.mklc.leveratedemoapp.R
 import com.mklc.leveratedemoapp.databinding.FragmentMainBinding
 import com.mklc.leveratedemoapp.ui.main.adapter.MainAdapter
@@ -22,6 +25,8 @@ class MainFragment : Fragment() {
     private lateinit var binding: FragmentMainBinding
     private lateinit var adapter: MainAdapter
     private lateinit var adapterCarousel: MainCarouselAdapter
+
+    private var shortAnimationDuration: Int = 1500
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -73,8 +78,36 @@ class MainFragment : Fragment() {
                 adapterCarousel.submitList(it)
             }
             liveDataOrientation.observe(viewLifecycleOwner){
-
+                if(it == RecyclerView.VERTICAL){
+                    hide(binding.recyclerViewTickerListCarousel)
+                    show(binding.recyclerViewTickerList)
+                }else if(it == RecyclerView.HORIZONTAL){
+                    hide(binding.recyclerViewTickerList)
+                    show(binding.recyclerViewTickerListCarousel)
+                }
             }
+        }
+    }
+
+    private fun hide(view: View){
+        view.animate()
+            .alpha(0f)
+            .setDuration(shortAnimationDuration.toLong())
+            .setListener(object : AnimatorListenerAdapter() {
+                override fun onAnimationEnd(animation: Animator) {
+                    view.visibility = View.GONE
+                }
+            })
+    }
+
+    private fun show(view: View){
+        view.apply {
+            alpha = 0f
+            visibility = View.VISIBLE
+            animate()
+                .alpha(1f)
+                .setDuration(shortAnimationDuration.toLong())
+                .setListener(null)
         }
     }
 }

@@ -1,4 +1,4 @@
-package com.mklc.leveratedemoapp.ui
+package com.mklc.leveratedemoapp.ui.main
 
 import android.os.Bundle
 import android.widget.Toast
@@ -7,7 +7,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import com.mklc.leveratedemoapp.R
 import com.mklc.leveratedemoapp.databinding.ActivityMainBinding
-import com.mklc.leveratedemoapp.ui.main.MainViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
