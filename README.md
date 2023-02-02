@@ -4,5 +4,5 @@ This is a test app about observing some cryptocurrency market values. The prices
 
 ## Records
 
-![](https://github.com/mmustafakilicc/LeverateDemoApp/blob/master/record_final.gif)
+![](https://github.com/mmustafakilicc/LeverateDemoApp/blob/master/record_final%20(1).gif)
 
